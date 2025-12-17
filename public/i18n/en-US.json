@@ -1,10 +1,6 @@
 {
-  "applicationName": "Application Name",
-  "merchantName": "Merchant Name",
-  "merchantDescription": "Merchant Description",
-  "merchantLogo": "Merchant Logo",
-  "merchantLogoUrl": "Merchant Logo URL",
-  "permissions": {
-  "staff": "Staff permissions"
-  }
+  "marge": "Mearge",
+  "date": "Date",
+  "time": "Time",
+  "keyword": "Keyword"
 }
