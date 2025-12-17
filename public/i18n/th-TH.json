@@ -5,6 +5,6 @@
   "merchantLogo": "Merchant Logo",
   "merchantLogoUrl": "Merchant Logo URL",
   "permissions": {
-    "staff": "Staff permissions"
+  "staff": "Staff permissions"
   }
 }
