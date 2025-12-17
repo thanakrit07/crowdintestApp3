@@ -1,0 +1,10 @@
+{
+  "applicationName": "แอพแอพแอพ",
+  "merchantName": "Merchant Name",
+  "merchantDescription": "Merchant Description",
+  "merchantLogo": "Merchant Logo",
+  "merchantLogoUrl": "Merchant Logo URL",
+  "permissions": {
+    "staff": "Staff permissions"
+  }
+}

@@ -1,0 +1,68 @@
+name: Sync Crowdin Translations
+
+on:
+  workflow_dispatch:
+
+jobs:
+  sync-translations:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install Crowdin CLI
+      - name: Install Crowdin CLI
+        run: |
+          curl -L https://crowdin.com/downloads/crowdin-cli.zip -o crowdin-cli.zip
+          unzip crowdin-cli.zip -d crowdin-cli
+          sudo mv crowdin-cli/crowdin /usr/local/bin/crowdin
+
+      # Create crowdin.yml config dynamically (ถ้ายังไม่มี)
+      - name: Create Crowdin config
+        run: |
+          cat <<EOF > crowdin.yml
+          project_id_env: CROWDIN_PROJECT_ID
+          api_token_env: CROWDIN_PERSONAL_TOKEN
+
+          files:
+            - source: /public/i18n/source.json
+              translation: /public/i18n/%two_letters_code%.json
+          EOF
+
+      # Download translations from Crowdin
+      - name: Download translations
+        env:
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_TOKEN }}
+          CROWDIN_PROJECT_ID: ${{ secrets.CROWDIN_PROJECT_ID }}
+        run: |
+          crowdin download --branch main
+
+      # Create new branch
+      - name: Create update branch
+        run: |
+          git checkout -b crowdin-update-$(date +%Y%m%d)
+
+      # Commit changes
+      - name: Commit translation updates
+        run: |
+          git config --global user.email "github-actions@github.com"
+          git config --global user.name "GitHub Actions"
+          git add public/i18n/*.json || echo "No changes"
+          git commit -m "Update translations from Crowdin" || echo "No changes to commit"
+
+      # Push branch
+      - name: Push branch
+        run: |
+          git push origin HEAD
+
+      # Create Pull Request
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: "Update translations from Crowdin"
+          body: "Automatic sync translation from Crowdin."
+          base: main
+          branch: crowdin-update-$(date +%Y%m%d)
